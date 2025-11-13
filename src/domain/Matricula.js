@@ -18,6 +18,18 @@ class Matricula {
             row.status
         );
     }
+
+    // Mantém a consistência com os demais modelos de domínio e
+    // fornece uma representação padronizada para uso nos controllers.
+    toJSON() {
+        return {
+            id: this.id,
+            aluno_id: this.aluno_id,
+            turma_id: this.turma_id,
+            data: this.data,
+            status: this.status
+        };
+    }
 }
 
 module.exports = Matricula;

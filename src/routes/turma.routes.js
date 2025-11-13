@@ -5,7 +5,7 @@ const router = express.Router();
 const turmaController = new TurmaController();
 
 // Get all turmas
-router.get('/', (req, res) => turmaController.getAllTurmas(req, res));
+router.get('/', (req, res) => turmaController.getTurmas(req, res));
 
 // Create a new turma
 router.post('/', (req, res) => turmaController.postTurma(req, res));
