@@ -11,7 +11,8 @@ class Turma {
     }
 
     static criar(turmaDTO) {
-        const horario = Horario.fromCodigo(turmaDTO.horario_codigo);
+        const codigoHorario = `D${turmaDTO.dia}T${turmaDTO.turno}`;
+        const horario = Horario.fromCodigo(codigoHorario);
         return new Turma(
             turmaDTO.id,
             turmaDTO.codigo,
@@ -29,7 +30,11 @@ class Turma {
             disciplina_id: this.disciplinaId,
             professor_id: this.professorId,
             vagas: this.vagas,
-            horario: this.horario.toJSON()
+            horario: {
+                dia: this.horario.dia,
+                turno: this.horario.turno,
+                codigo: this.horario.codigo
+            }
         };
     }
 }

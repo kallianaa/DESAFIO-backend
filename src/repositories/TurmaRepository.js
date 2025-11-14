@@ -3,7 +3,7 @@ const db = require('../config/database');
 
 class TurmaRepository {
     async findBy(id) {
-        const result = await db.query('SELECT * FROM turma WHERE id = $1', [id]);
+        const result = await db.query('SELECT * FROM "Turma" WHERE id = $1', [id]);
         if (result.rows.length === 0) {
             return null;
         }
@@ -13,7 +13,7 @@ class TurmaRepository {
     async save(turma) {
         const result = await db.query(
             `INSERT INTO "Turma" (codigo, disciplina_id, professor_id, vagas, dia, turno) 
-            VALUES ($1) 
+            VALUES ($1, $2, $3, $4, $5, $6) 
             RETURNING *`,
             [
                 turma.codigo,
@@ -60,7 +60,7 @@ class TurmaRepository {
 
     async delete(id) {
         const result = await db.query(
-            'DELETE FROM turma WHERE id = $1 RETURNING *',
+            'DELETE FROM "Turma" WHERE id = $1 RETURNING *',
             [id]
         );
         if (result.rows.length === 0) {

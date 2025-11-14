@@ -2,7 +2,6 @@ const express = require('express');
 const TurmaController = require('../controllers/TurmaController');
 
 const router = express.Router();
-const turmaController = new TurmaController();
 
 // Get all turmas
 router.get('/', (req, res) => turmaController.getTurmas(req, res));

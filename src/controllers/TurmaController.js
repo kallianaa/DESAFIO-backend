@@ -4,7 +4,15 @@ class TurmaController {
     constructor() {
         this.turmaService = new TurmaService();
     }
-
+    async listarOfertas(req, res) {
+    try {
+      const ofertas = await this.turmaService.listarTurmas();
+      return res.json(ofertas);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Erro ao buscar ofertas.' });
+    }
+  }
     async deleteTurma(req, res) {
         try {
             await this.turmaService.deleteTurma(req.params.id);
@@ -50,4 +58,4 @@ class TurmaController {
     }
 }
 
-module.exports = TurmaController;
+module.exports = new TurmaController();
