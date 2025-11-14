@@ -1,24 +1,33 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 
 // Middleware for parsing JSON bodies
 app.use(express.json());
 
-// Routes for authentication
+// Routes for Authentication
 const authRoutes = require('./routes/auth.routes');
 app.use('/auth', authRoutes);
 
-// Routes for health checks
+// Routes for Health checks
 const healthRoutes = require('./routes/health.routes');
 app.use('/health', healthRoutes);
 
-// Routes for aluno
+// Routes for Usuario
+const usuarioRoutes = require('./routes/usuario.routes');
+app.use('/usuario', usuarioRoutes);
+
+// Routes for Aluno
 const alunoRoutes = require('./routes/aluno.routes');
 app.use('/aluno', alunoRoutes);
 
-// Route for matricula
+// Route for Matricula
 const matriculaRoutes = require('./routes/matricula.routes');
-app.use('/matricula', matriculaRoutes);
+// app.use('/matricula', matriculaRoutes);
+
+// Route for Turma
+const turmaRoutes = require('./routes/turma.routes');
+app.use('/turmas', turmaRoutes);
 
 // Basic route to verify server is running
 app.get('/', (req, res) => {

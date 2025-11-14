@@ -1,25 +1,30 @@
-  const AuthService = require('../services/AuthService');
+const AuthService = require("../services/AuthService");
+const LoginDTO = require("../security/LoginDTO");
 
-  class AuthController {
-    constructor() {
-      this.authService = new AuthService();
-    }
-
-    login = async (req, res) => {
-      try {
-        const { email, senha } = req.body;
-
-        if (!email || !senha) {
-          return res.status(400).json({ message: 'Email e senha são obrigatórios' });
-        }
-
-        const data = await this.authService.login(email, senha);
-        return res.json(data);
-
-      } catch (error) {
-        return res.status(401).json({ message: error.message });
-      }
-    }
+class AuthController {
+  constructor() {
+    this.authService = new AuthService();
   }
 
-  module.exports = new AuthController();
+  login = async (req, res) => {
+    try {
+      const dto = LoginDTO.fromRequest(req.body);
+      const tokenDto = await this.authService.login(dto);
+      return res.json(tokenDto);
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
+    }
+  };
+
+  refresh = async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+      const tokenDto = await this.authService.refresh(refreshToken);
+      return res.json(tokenDto);
+    } catch (err) {
+      return res.status(401).json({ message: err.message });
+    }
+  };
+}
+
+module.exports = new AuthController();
