@@ -59,6 +59,21 @@ class UsuarioService {
     if (!usuario) throw new Error('Usuário não encontrado');
     return this.usuarioRepository.delete(id);
   }
+
+  atribuirRole = async (User, Role) => {
+    const idUser = typeof User === 'object' && User != null ? User.id : this.criarUsuario(User);
+    const roleName = typeof Role === 'object' && Role != null ? Role.name : Role;
+
+    if (!idUser) {
+      throw new Error('ID do Usuário é obrigatório.');
+    }
+    if (!roleName || typeof roleName !== 'string') {
+      throw new Error('O nome da Role (string) é obrigatório.');
+    }
+    
+    await this.usuarioRepository.assingRole(idUser, roleName);
+  
+  }
 }
 
 module.exports = UsuarioService;
