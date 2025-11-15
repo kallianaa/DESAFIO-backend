@@ -23,7 +23,7 @@ app.use('/aluno', alunoRoutes);
 
 // Route for Matricula
 const matriculaRoutes = require('./routes/matricula.routes');
-// app.use('/matricula', matriculaRoutes);
+app.use('/matricula', matriculaRoutes);
 
 // Route for Turma
 const turmaRoutes = require('./routes/turma.routes');
