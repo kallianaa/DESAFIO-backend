@@ -29,6 +29,10 @@ const matriculaRoutes = require('./routes/matricula.routes');
 const turmaRoutes = require('./routes/turma.routes');
 app.use('/turmas', turmaRoutes);
 
+// Route for Disciplina
+const disciplinaRoutes = require('./routes/disciplina.routes');
+app.use('/disciplinas', disciplinaRoutes);
+
 // Basic route to verify server is running
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the API' });
