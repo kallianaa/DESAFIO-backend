@@ -22,6 +22,10 @@ class Turma {
         );
     }
 
+    vagasDisponíveis(alunosMatriculados){
+        return this.vagas - alunosMatriculados;
+    }
+
     toJSON() {
         return {
             id: this.id,

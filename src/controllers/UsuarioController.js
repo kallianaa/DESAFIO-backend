@@ -62,17 +62,6 @@ class UsuarioController {
     }
   };
 
-  atribuirRole = async (idUser, Role) => {
-    try {
-      if(!idUser) {
-        if(Role === "ADMIN" || Role === "ALUNO" || Role === "PROFESSOR"){
-          await this.usuarioRepository.atribuirRole(idUser, role);
-        }
-      }
-    } catch (err) {
-        return res.status(404).json({message: err.message});
-    }
-  }
 
 }
 
