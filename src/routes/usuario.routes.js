@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const UsuarioController = require('../controllers/UsuarioController');
-const auth = require('../security/authenticate');
-const requireRole = require('../security/authorizeRole');
+const auth = require('../security/ensureAuth');
+const requireRole = require('../security/ensureRole');
 
 // Registro (público)
 router.post('/', (req, res) => UsuarioController.criar(req, res));
