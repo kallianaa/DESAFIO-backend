@@ -12,17 +12,9 @@ app.use('/auth', authRoutes);
 const healthRoutes = require('./routes/health.routes');
 app.use('/health', healthRoutes);
 
-// Routes for aluno
-const alunoRoutes = require('./routes/aluno.routes');
-app.use('/aluno', alunoRoutes);
-
-// Route for matricula
-const matriculaRoutes = require('./routes/matricula.routes');
-app.use('/matricula', matriculaRoutes);
-
 // Routes for turma
 const turmaRoutes = require('./routes/turma.routes');
-app.use('/turma', turmaRoutes);
+app.use('/turmas', turmaRoutes);
 
 // Basic route to verify server is running
 app.get('/', (req, res) => {
