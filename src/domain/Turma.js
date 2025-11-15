@@ -1,3 +1,4 @@
+// src/domain/Turma.js
 const Horario = require('./Horario');
 
 class Turma {
@@ -10,15 +11,21 @@ class Turma {
         this.horario = horario;
     }
 
-    static criar(turmaDTO) {
-        const codigoHorario = `D${turmaDTO.dia}T${turmaDTO.turno}`;
-        const horario = Horario.fromCodigo(codigoHorario);
+    static criar(row) {
+        if (!row) return null;
+
+        // Banco traz dia/turno → montamos o código aqui
+        const dia = row.dia;
+        const turno = row.turno;
+        const codigoHorario = `D${dia}T${turno}`;
+        const horario = new Horario(dia, turno, codigoHorario);
+
         return new Turma(
-            turmaDTO.id,
-            turmaDTO.codigo,
-            turmaDTO.disciplina_id,
-            turmaDTO.professor_id,
-            turmaDTO.vagas,
+            row.id,
+            row.codigo,
+            row.disciplina_id,
+            row.professor_id,
+            row.vagas,
             horario
         );
     }
@@ -30,11 +37,7 @@ class Turma {
             disciplina_id: this.disciplinaId,
             professor_id: this.professorId,
             vagas: this.vagas,
-            horario: {
-                dia: this.horario.dia,
-                turno: this.horario.turno,
-                codigo: this.horario.codigo
-            }
+            horario: this.horario.toJSON() // { dia, turno, codigo }
         };
     }
 }

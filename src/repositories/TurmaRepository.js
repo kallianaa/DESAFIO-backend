@@ -3,11 +3,19 @@ const db = require('../config/database');
 
 class TurmaRepository {
     async findBy(id) {
-        const result = await db.query('SELECT * FROM "Turma" WHERE id = $1', [id]);
+        const result = await db.query(
+            'SELECT * FROM "Turma" WHERE id = $1',
+            [id]
+        );
         if (result.rows.length === 0) {
             return null;
         }
         return Turma.criar(result.rows[0]);
+    }
+
+    async findAll() {
+        const result = await db.query('SELECT * FROM "Turma"');
+        return result.rows.map(row => Turma.criar(row));
     }
 
     async save(turma) {
@@ -27,12 +35,7 @@ class TurmaRepository {
         return Turma.criar(result.rows[0]);
     }
 
-    async findAll() {
-        const result = await db.query('SELECT * FROM "Turma"');
-        return result.rows.map(row => Turma.criar(row));
-    }
-
-    async update(id, turmaDTO) {
+    async update(turma) {
     const result = await db.query(`
         UPDATE "Turma"
         SET codigo = $1,
@@ -42,16 +45,17 @@ class TurmaRepository {
             dia = $5,
             turno = $6
         WHERE id = $7
-        RETURNING *;
-    `, [
-        turmaDTO.codigo,
-        turmaDTO.disciplina_id,
-        turmaDTO.professor_id,
-        turmaDTO.vagas,
-        turmaDTO.dia,
-        turmaDTO.turno,
-        id
-    ]);
+        RETURNING *`, 
+        [
+            turma.codigo,
+            turma.disciplinaId,
+            turma.professorId,
+            turma.vagas,
+            turma.horario.dia,
+            turma.horario.turno,
+            turma.id
+        ]);
+
         if (result.rows.length === 0) {
             return null;
         }
