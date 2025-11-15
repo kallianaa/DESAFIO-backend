@@ -5,47 +5,46 @@ class TurmaController {
         this.turmaService = new TurmaService();
     }
 
-    async deleteTurma(req, res) {
-        try {
-            await this.turmaService.deleteTurma(req.params.id);
-            res.status(204).send();
-        } catch (error) {
-            if (error.message === 'Turma não encontrada') {
-                res.status(404).json({ message: error.message });
-            } else {
-                res.status(500).json({ message: error.message });
-            }
-        }
-    }
-
     async getTurmas(req, res) {
         try {
             const turmas = await this.turmaService.listarTurmas();
-            res.json(turmas);
+            return res.json(turmas);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            console.error(error);
+            return res.status(500).json({ message: error.message });
         }
     }
 
     async postTurma(req, res) {
         try {
             const turma = await this.turmaService.criarTurma(req.body);
-            res.status(201).json(turma);
+            return res.status(201).json(turma);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            return res.status(400).json({ message: error.message });
         }
     }
 
     async putTurma(req, res) {
         try {
             const turma = await this.turmaService.putTurma(req.params.id, req.body);
-            res.json(turma);
+            return res.json(turma);
         } catch (error) {
             if (error.message === 'Turma não encontrada') {
-                res.status(404).json({ message: error.message });
-            } else {
-                res.status(400).json({ message: error.message });
+                return res.status(404).json({ message: error.message });
             }
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
+    async deleteTurma(req, res) {
+        try {
+            await this.turmaService.deleteTurma(req.params.id);
+            return res.status(204).send();
+        } catch (error) {
+            if (error.message === 'Turma não encontrada') {
+                return res.status(404).json({ message: error.message });
+            }
+            return res.status(500).json({ message: error.message });
         }
     }
 }
