@@ -21,7 +21,7 @@ class UsuarioController {
     try {
       if(!idUser) {
         if(Role === "ADMIN" || Role === "ALUNO" || Role === "PROFESSOR"){
-          await this.usuarioRepository.atribuirRole(idUser, role);
+          await this.usuarioRepository.atribuirRole(idUser, Role);
         }
       }
     } catch (err) {
