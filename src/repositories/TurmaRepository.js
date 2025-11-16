@@ -3,7 +3,11 @@ const db = require('../config/database');
 const MatriculaRepository = require('./MatriculaRepository');
 
 class TurmaRepository {
-    async findBy(id) {
+    constructor() {
+        this.matriculaRepository = new MatriculaRepository();
+    }
+
+    async findById(id) {
         const result = await db.query(
             'SELECT * FROM "Turma" WHERE id = $1',
             [id]

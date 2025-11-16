@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const UsuarioController = require('../controllers/UsuarioController');
-const auth = require('../security/ensureAuth');
-const requireRole = require('../security/ensureRole');
 
 // middlewares
 const ensureAuth = require('../middlewares/ensureAuth');

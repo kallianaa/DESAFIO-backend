@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const JWTProvider = require("../security/JWTProvider");
+console.log("SECRET usada na validação:", JWTProvider.JWT_SECRET);
 
 module.exports = function auth(req, res, next) {
   console.log("🔍 Authorization recebido:", req.headers.authorization);
