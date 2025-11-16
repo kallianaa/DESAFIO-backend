@@ -1,8 +1,6 @@
 // src/controllers/UsuarioController.js
 const UsuarioService = require('../services/UsuarioService');
 const UsuarioDTO = require('../security/UsuarioDTO');
-const Role = require('../domain/Role');
-const Usuario = require('../domain/Usuario');
 
 class UsuarioController {
   constructor() {
@@ -61,8 +59,6 @@ class UsuarioController {
       return res.status(404).json({ message: err.message });
     }
   };
-
-
 }
 
 module.exports = new UsuarioController();
