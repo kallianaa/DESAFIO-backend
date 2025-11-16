@@ -1,0 +1,585 @@
+{
+  "info": {
+    "name": "DESAFIO Backend API",
+    "description": "Collection for testing DESAFIO Backend API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Check Server Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"senha\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuário",
+      "item": [
+        {
+          "name": "Create User (Public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@example.com\",\n  \"senha\": \"password123\",\n  \"role\": \"ALUNO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuario",
+              "host": ["{{base_url}}"],
+              "path": ["usuario"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Users (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuario",
+              "host": ["{{base_url}}"],
+              "path": ["usuario"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuario/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["usuario", "{{user_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Updated\",\n  \"email\": \"joao.updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuario/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["usuario", "{{user_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"password123\",\n  \"novaSenha\": \"newpassword456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuario/{{user_id}}/senha",
+              "host": ["{{base_url}}"],
+              "path": ["usuario", "{{user_id}}", "senha"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuario/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["usuario", "{{user_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Turma",
+      "item": [
+        {
+          "name": "List All Turmas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/turmas",
+              "host": ["{{base_url}}"],
+              "path": ["turmas"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Turma (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"TURMA-001\",\n  \"disciplinaId\": \"{{disciplina_id}}\",\n  \"professorId\": \"{{professor_id}}\",\n  \"horarios\": [\n    {\n      \"diaSemana\": \"SEGUNDA\",\n      \"horaInicio\": \"08:00\",\n      \"horaFim\": \"10:00\"\n    },\n    {\n      \"diaSemana\": \"QUARTA\",\n      \"horaInicio\": \"08:00\",\n      \"horaFim\": \"10:00\"\n    }\n  ],\n  \"vagas\": 30,\n  \"vagasDisponiveis\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/turmas",
+              "host": ["{{base_url}}"],
+              "path": ["turmas"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Turma (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"TURMA-001-UPDATED\",\n  \"vagas\": 35,\n  \"vagasDisponiveis\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/turmas/{{turma_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["turmas", "{{turma_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Turma (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/turmas/{{turma_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["turmas", "{{turma_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Disciplina",
+      "item": [
+        {
+          "name": "List All Disciplinas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/disciplinas",
+              "host": ["{{base_url}}"],
+              "path": ["disciplinas"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Disciplina (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"DISC-001\",\n  \"nome\": \"Matemática Discreta\",\n  \"descricao\": \"Estudo de estruturas matemáticas discretas\",\n  \"cargaHoraria\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/disciplinas",
+              "host": ["{{base_url}}"],
+              "path": ["disciplinas"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Disciplina (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Matemática Discreta Avançada\",\n  \"cargaHoraria\": 90\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/disciplinas/{{disciplina_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["disciplinas", "{{disciplina_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Disciplina (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/disciplinas/{{disciplina_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["disciplinas", "{{disciplina_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Matrícula",
+      "item": [
+        {
+          "name": "Get My Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/matricula/minhas",
+              "host": ["{{base_url}}"],
+              "path": ["matricula", "minhas"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/matricula",
+              "host": ["{{base_url}}"],
+              "path": ["matricula"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Classes for Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/matricula/aluno/{{aluno_id}}/disponiveis",
+              "host": ["{{base_url}}"],
+              "path": ["matricula", "aluno", "{{aluno_id}}", "disponiveis"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": \"{{aluno_id}}\",\n  \"turmaId\": \"{{turma_id}}\",\n  \"dataCriacao\": \"2025-11-16\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/matricula",
+              "host": ["{{base_url}}"],
+              "path": ["matricula"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Enrollment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/matricula/{{matricula_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["matricula", "{{matricula_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Enrollment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/matricula/{{matricula_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["matricula", "{{matricula_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Aluno",
+      "item": [
+        {
+          "name": "List Available Offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/aluno/ofertas",
+              "host": ["{{base_url}}"],
+              "path": ["aluno", "ofertas"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "turma_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "disciplina_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "matricula_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "aluno_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "professor_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
