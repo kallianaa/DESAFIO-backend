@@ -1,6 +1,6 @@
 // src/controllers/UsuarioController.js
 const UsuarioService = require('../services/UsuarioService');
-const UsuarioDTO = require('../security/UsuarioDTO');
+const UsuarioDTO = require('../dtos/UsuarioDTO');
 
 class UsuarioController {
   constructor() {
@@ -17,6 +17,18 @@ class UsuarioController {
     }
   };
 
+  atribuirRole = async (idUser, Role) => {
+    try {
+      if(!idUser) {
+        if(Role === "ADMIN" || Role === "ALUNO" || Role === "PROFESSOR"){
+          await this.usuarioRepository.atribuirRole(idUser, role);
+        }
+      }
+    } catch (err) {
+        return res.status(404).json({message: err.message});
+    }
+  }
+  
   listar = async (_req, res) => {
     const usuarios = await this.usuarioService.listarUsuarios();
     return res.json(usuarios);

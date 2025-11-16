@@ -7,10 +7,6 @@ class TurmaService {
         this.turmaRepository = new TurmaRepository();
     }
 
-    async listarTurmas() {
-        return await this.turmaRepository.findAll();
-    }
-
     async criarTurma(turmaData) {
         const {
             codigo,
@@ -36,7 +32,7 @@ class TurmaService {
         } else {
             throw new Error('É necessário informar dia/turno OU horario_codigo');
         }
-
+    
         const turma = new Turma(
             null,
             codigo,
@@ -49,18 +45,25 @@ class TurmaService {
         return await this.turmaRepository.save(turma);
     }
 
-    async deleteTurma(id) {
-        const turma = await this.turmaRepository.findBy(id);
-        if (!turma) {
-            throw new Error('Turma não encontrada');
-        }
+    async listarTurmas(user) {
 
-        const deleted = await this.turmaRepository.delete(id);
-        if (!deleted) {
-            throw new Error('Erro ao deletar turma');
+        // ADMIN pode acessar qualquer turma
+        if (user.roles.includes("ADMIN")) {
+            return this.turmaRepository.findAll();
         }
+        // Professor só pode ver alunos da turma que leciona
+        if (user.roles.includes("PROFESSOR")) {
+            return this.turmaRepository.findByProfessor(user.id);
+        }
+        // Alunos só podem ver suas turmas
+        if (user.roles.includes("ALUNO")) {
+            return this.turmaRepository.findByAluno(user.id);
+        }
+            throw new Error("Acesso negado");
+    }
 
-        return true;
+    async listarAlunosDaTurma(turmaId, user) {
+    return this.turmaRepository.listarAlunosDaTurma(turmaId, user);
     }
 
     async putTurma(id, turmaData) {
@@ -113,6 +116,20 @@ class TurmaService {
         }
 
         return updated;
+    }
+
+    async deleteTurma(id) {
+        const turma = await this.turmaRepository.findBy(id);
+        if (!turma) {
+            throw new Error('Turma não encontrada');
+        }
+
+        const deleted = await this.turmaRepository.delete(id);
+        if (!deleted) {
+            throw new Error('Erro ao deletar turma');
+        }
+
+        return true;
     }
 }
 

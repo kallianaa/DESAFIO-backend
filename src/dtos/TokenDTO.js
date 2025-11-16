@@ -1,7 +1,8 @@
 // src/security/TokenDTO.js
 class TokenDTO {
-  constructor(token, user) {
+  constructor(token, refreshToken, user) {
     this.accessToken = token;
+    this.refreshToken = refreshToken;
     this.user = user;
   }
 }

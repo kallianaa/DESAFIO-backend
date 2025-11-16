@@ -60,7 +60,7 @@ class UsuarioRepository {
     const usuario = result.rows[0];
 
     // por padrão, todo usuário criado recebe a role ALUNO (opcional)
-    await this.assingRole(usuario.id, "ALUNO");
+    await this.assignRole(usuario.id, "ALUNO");
 
     return Usuario.criar(usuario, ["ALUNO"]);
   }
@@ -121,7 +121,7 @@ class UsuarioRepository {
     return result.rows.map(r => r.nome);
   }
 
-  async assingRole(userId, roleName) {
+  async assignRole(userId, roleName) {
     const roleResult = await db.query(`
       SELECT id FROM "Role" WHERE nome = $1
     `, [roleName]);
