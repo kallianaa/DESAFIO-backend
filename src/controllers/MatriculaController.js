@@ -5,6 +5,7 @@ const MatriculaService = require('../services/MatriculaService');
 class MatriculaController {
     constructor() {
         this.getMinhasMatriculas = this.getMinhasMatriculas.bind(this);
+        this.getAll = this.getAll.bind(this);
         this.getById = this.getById.bind(this);
         this.getTurmasDisponiveis = this.getTurmasDisponiveis.bind(this);
         this.delete = this.delete.bind(this);
@@ -15,6 +16,65 @@ class MatriculaController {
     _getUserIdFromReq(req) {
         if (!req || !req.user) return null;
         return req.user.id || req.user.sub || null;
+    }
+
+    async getAll(req, res) {
+        console.log('[MatriculaController.getAll] user:', req.user && { id: req.user.id || req.user.sub, roles: req.user.roles });
+        try {
+            const roles = Array.isArray(req.user && req.user.roles) ? req.user.roles : [];
+            const userId = this._getUserIdFromReq(req);
+
+            let query = `
+                SELECT
+                    m.id,
+                    m.data,
+                    m.status,
+                    a.id as aluno_id,
+                    a.ra,
+                    ua.nome as aluno_nome,
+                    ua.email as aluno_email,
+                    t.id as turma_id,
+                    t.codigo as turma_codigo,
+                    d.codigo as disciplina_codigo,
+                    d.nome as disciplina_nome,
+                    d.creditos,
+                    up.nome as professor_nome,
+                    t.dia,
+                    t.turno
+                FROM "Matricula" m
+                         INNER JOIN "Aluno" a ON m.aluno_id = a.id
+                         INNER JOIN "Usuario" ua ON a.id = ua.id
+                         INNER JOIN "Turma" t ON m.turma_id = t.id
+                         INNER JOIN "Disciplina" d ON t.disciplina_id = d.id
+                         INNER JOIN "Professor" p ON t.professor_id = p.id
+                         INNER JOIN "Usuario" up ON p.id = up.id
+            `;
+
+            // Non-admin users can only see their own matriculas
+            if (!roles.includes('ADMIN')) {
+                query += ` WHERE m.aluno_id = $1 ORDER BY m.data DESC`;
+            } else {
+                query += ` ORDER BY m.data DESC`;
+            }
+
+            const result = roles.includes('ADMIN') 
+                ? await db.query(query) 
+                : await db.query(query, [userId]);
+            
+            const matriculas = result && result.rows ? result.rows : [];
+
+            return res.json({
+                success: true,
+                data: matriculas,
+                count: matriculas.length
+            });
+        } catch (error) {
+            console.error('[MatriculaController.getAll] Error:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Erro ao buscar matrículas'
+            });
+        }
     }
 
     async getMinhasMatriculas(req, res) {
