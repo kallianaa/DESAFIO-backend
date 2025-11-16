@@ -23,6 +23,14 @@ class MatriculaRepository {
         return Matricula.criar(result.rows[0]);
     }
 
+    async findByAlunoId(alunoId) {
+        const result = await db.query(
+            'SELECT * FROM "Matricula" WHERE aluno_id = $1 ORDER BY data DESC',
+            [alunoId]
+        );
+        return result.rows.map(row => Matricula.criar(row));
+    }
+
     async save(matricula) {
         try {
             if (matricula.data) {

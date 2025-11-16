@@ -1,11 +1,15 @@
 // src/controllers/MatriculaController.js
 const db = require('../config/database'); // exporta .query e .pool
+const MatriculaService = require('../services/MatriculaService');
 
 class MatriculaController {
     constructor() {
-        this.getAll = this.getAll.bind(this);
+        this.getMinhasMatriculas = this.getMinhasMatriculas.bind(this);
         this.getById = this.getById.bind(this);
         this.getTurmasDisponiveis = this.getTurmasDisponiveis.bind(this);
+        this.delete = this.delete.bind(this);
+        this.post = this.post.bind(this);
+        this.matriculaService = new MatriculaService();
     }
 
     _getUserIdFromReq(req) {
@@ -13,78 +17,18 @@ class MatriculaController {
         return req.user.id || req.user.sub || null;
     }
 
-    async getAll(req, res) {
-        console.log('[MatriculaController.getAll] query:', req.query, 'user:', req.user && { id: req.user.id || req.user.sub, roles: req.user.roles });
+    async getMinhasMatriculas(req, res) {
+        console.log('[MatriculaController.getMinhasMatriculas] user:', req.user && { id: req.user.id || req.user.sub, roles: req.user.roles });
         try {
-            const { aluno_id, turma_id, status, disciplina_id } = req.query;
-
-            let baseQuery = `
-                SELECT
-                    m.id,
-                    m.data,
-                    m.status,
-                    a.id as aluno_id,
-                    a.ra,
-                    ua.nome as aluno_nome,
-                    t.id as turma_id,
-                    t.codigo as turma_codigo,
-                    d.codigo as disciplina_codigo,
-                    d.nome as disciplina_nome,
-                    d.creditos,
-                    up.nome as professor_nome,
-                    t.dia,
-                    t.turno
-                FROM "Matricula" m
-                         INNER JOIN "Aluno" a ON m.aluno_id = a.id
-                         INNER JOIN "Usuario" ua ON a.id = ua.id
-                         INNER JOIN "Turma" t ON m.turma_id = t.id
-                         INNER JOIN "Disciplina" d ON t.disciplina_id = d.id
-                         INNER JOIN "Professor" p ON t.professor_id = p.id
-                         INNER JOIN "Usuario" up ON p.id = up.id
-            `;
-
-            const conditions = [];
-            const values = [];
-            let idx = 1;
-
-            if (aluno_id) {
-                conditions.push(`m.aluno_id = $${idx++}`);
-                values.push(aluno_id);
-            }
-
-            if (turma_id) {
-                conditions.push(`m.turma_id = $${idx++}`);
-                values.push(turma_id);
-            }
-
-            if (status) {
-                conditions.push(`m.status = $${idx++}`);
-                values.push(status);
-            }
-
-            if (disciplina_id) {
-                conditions.push(`t.disciplina_id = $${idx++}`);
-                values.push(disciplina_id);
-            }
-
-            const roles = Array.isArray(req.user && req.user.roles) ? req.user.roles : [];
             const userId = this._getUserIdFromReq(req);
 
-            if (!(roles.includes('ADMIN')) && roles.includes('ALUNO') && userId) {
-                conditions.push(`m.aluno_id = $${idx++}`);
-                values.push(userId);
+            if (!userId) {
+                return res.status(401).json({ success: false, error: 'Usuário não autenticado' });
             }
 
-            if (conditions.length > 0) {
-                baseQuery += ' WHERE ' + conditions.join(' AND ');
-            }
+            const matriculas = await this.matriculaService.getMinhasMatriculas(userId);
 
-            baseQuery += ' ORDER BY m.data DESC';
-
-            const result = await db.query(baseQuery, values);
-            const matriculas = result && result.rows ? result.rows : [];
-
-            console.log('[MatriculaController.getAll] rows:', matriculas.length);
+            console.log('[MatriculaController.getMinhasMatriculas] rows:', matriculas.length);
 
             return res.json({
                 success: true,
@@ -92,10 +36,10 @@ class MatriculaController {
                 count: matriculas.length
             });
         } catch (error) {
-            console.error('[MatriculaController.getAll] Error:', error);
+            console.error('[MatriculaController.getMinhasMatriculas] Error:', error);
             return res.status(500).json({
                 success: false,
-                error: 'Erro ao buscar matrículas'
+                error: 'Erro ao buscar minhas matrículas'
             });
         }
     }
@@ -195,6 +139,82 @@ class MatriculaController {
         } catch (error) {
             console.error('[MatriculaController.getTurmasDisponiveis] Error:', error);
             return res.status(500).json({ success: false, error: 'Erro ao buscar turmas disponíveis' });
+        }
+    }
+
+    async delete(req, res) {
+        console.log('[MatriculaController.delete] params:', req.params, 'user:', req.user && { id: req.user.id || req.user.sub });
+        try {
+            const { id } = req.params;
+
+            // Check if the matricula exists
+            const matricula = await this.matriculaService.getMatriculaById(id);
+
+            const roles = Array.isArray(req.user && req.user.roles) ? req.user.roles : [];
+            const userId = this._getUserIdFromReq(req);
+
+            // Authorization check: only ADMIN or the student themselves can delete
+            if (!(roles.includes('ADMIN')) && userId !== matricula.aluno_id) {
+                return res.status(403).json({ success: false, error: 'Acesso negado' });
+            }
+
+            // Delete the matricula
+            await this.matriculaService.deleteMatricula(id);
+
+            return res.json({ success: true, message: 'Matrícula deletada com sucesso' });
+        } catch (error) {
+            console.error('[MatriculaController.delete] Error:', error);
+            
+            if (error.message.includes('não encontrada')) {
+                return res.status(404).json({ success: false, error: error.message });
+            }
+            
+            return res.status(500).json({ success: false, error: 'Erro ao deletar matrícula' });
+        }
+    }
+
+    async post(req, res) {
+        console.log('[MatriculaController.post] body:', req.body, 'user:', req.user && { id: req.user.id || req.user.sub, roles: req.user.roles });
+        try {
+            const { aluno_id, turma_id, data, status } = req.body;
+
+            // Validation
+            if (!aluno_id || !turma_id) {
+                return res.status(400).json({ success: false, error: 'aluno_id e turma_id são obrigatórios' });
+            }
+
+            const roles = Array.isArray(req.user && req.user.roles) ? req.user.roles : [];
+            const userId = this._getUserIdFromReq(req);
+
+            // Authorization check: only ADMIN can create matriculas for other students
+            if (!(roles.includes('ADMIN')) && userId !== aluno_id) {
+                return res.status(403).json({ success: false, error: 'Acesso negado' });
+            }
+
+            // Use service to create matricula
+            const matricula = await this.matriculaService.createMatricula({
+                aluno_id,
+                turma_id,
+                data,
+                status
+            });
+
+            return res.status(201).json({ success: true, data: matricula });
+        } catch (error) {
+            console.error('[MatriculaController.post] Error:', error);
+            
+            // Handle specific error messages from service
+            if (error.message.includes('obrigatórios')) {
+                return res.status(400).json({ success: false, error: error.message });
+            }
+            if (error.message.includes('inválido')) {
+                return res.status(400).json({ success: false, error: error.message });
+            }
+            if (error.message.includes('já está matriculado')) {
+                return res.status(409).json({ success: false, error: error.message });
+            }
+            
+            return res.status(500).json({ success: false, error: 'Erro ao criar matrícula' });
         }
     }
 }

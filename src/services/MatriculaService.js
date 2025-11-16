@@ -13,6 +13,12 @@ class MatriculaService {
         return await this.matriculaRepository.findAll();
     }
 
+    async getMinhasMatriculas(alunoId) {
+        if (!alunoId) throw new Error('alunoId é obrigatório');
+        const matriculas = await this.matriculaRepository.findByAlunoId(alunoId);
+        return matriculas;
+    }
+
     async getMatriculaById(id) {
         const matricula = await this.matriculaRepository.findBy(id);
         if (!matricula) throw new Error('Matrícula não encontrada');
