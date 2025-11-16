@@ -1,8 +1,13 @@
 const Turma = require('../domain/Turma');
 const db = require('../config/database');
+const MatriculaRepository = require('./MatriculaRepository');
 
 class TurmaRepository {
-    async findBy(id) {
+    constructor() {
+        this.matriculaRepository = new MatriculaRepository();
+    }
+
+    async findById(id) {
         const result = await db.query(
             'SELECT * FROM "Turma" WHERE id = $1',
             [id]
@@ -72,6 +77,21 @@ class TurmaRepository {
         }
         return true;
     }
+
+async listarAlunosDaTurma(turmaId, user) {
+    const turma = await this.findById(turmaId);
+    if (!turma) throw new Error("Turma não encontrada");
+
+    // Admin pode ver
+    if (user.roles.includes("ADMIN"))
+      return this.matriculaRepository.findAlunosPorTurma(turmaId);
+
+    // Professor só se a turma for dele
+    if (user.roles.includes("PROFESSOR") && turma.professorId === user.id)
+      return this.matriculaRepository.findAlunosPorTurma(turmaId);
+
+    throw new Error("Acesso negado");
+  }
 }
 
 module.exports = TurmaRepository;

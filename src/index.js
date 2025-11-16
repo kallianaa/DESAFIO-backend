@@ -17,13 +17,9 @@ app.use('/health', healthRoutes);
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
-// Routes for Aluno
-const alunoRoutes = require('./routes/aluno.routes');
-app.use('/aluno', alunoRoutes);
-
-// Route for Matricula
+// Matricula Routes
 const matriculaRoutes = require('./routes/matricula.routes');
-// app.use('/matricula', matriculaRoutes);
+app.use('/matricula', matriculaRoutes);
 
 // Route for Turma
 const turmaRoutes = require('./routes/turma.routes');

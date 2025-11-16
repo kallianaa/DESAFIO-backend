@@ -1,7 +1,7 @@
 const UsuarioRepository = require('../repositories/UsuarioRepository');
 const PasswordHasher = require('../security/PasswordHasher');
 const JWTProvider = require('../security/JWTProvider');
-const TokenDTO = require('../security/TokenDTO');
+const RefreshDTO = require('../dtos/RefreshDTO');
 
 class AuthService {
   constructor() {
@@ -26,21 +26,19 @@ class AuthService {
 
     const roles = [...user.roles].map(r => r.nome);
 
-    const accessToken = JWTProvider.generateAccessToken(
-      user.id,
-      user.email,
-      roles
-    );
-
+    const accessToken = JWTProvider.generateAccessToken(user.id, user.email, roles);
     const refreshToken = JWTProvider.generateRefreshToken(user.id);
 
-    return new TokenDTO(accessToken, {
-      id: user.id,
-      nome: user.nome,
-      email: user.email,
-      roles,
-      refreshToken
-    });
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+        roles
+      }
+    };
   }
 
   // ===========================
@@ -61,12 +59,7 @@ class AuthService {
         roles
       );
 
-      return new TokenDTO(newAccessToken, {
-        id: user.id,
-        nome: user.nome,
-        email: user.email,
-        roles
-      });
+      return new RefreshDTO(newAccessToken);
 
     } catch (err) {
       throw new Error("Refresh token inválido ou expirado");
