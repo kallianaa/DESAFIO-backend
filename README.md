@@ -1,12 +1,22 @@
 # DESAFIO-backend
 
-Este é um projeto backend desenvolvido com Node.js e Express.
+Sistema backend de gestão escolar desenvolvido com **Node.js**, **Express** e **PostgreSQL**. A aplicação implementa autenticação JWT, autorização baseada em papéis (roles), e gerenciamento completo de alunos, disciplinas, turmas e matrículas.
 
 ## Requisitos
 
 - Node.js (versão 14 ou superior)
-- npm (gerenciador de pacotes do Node.js)
+- npm (versão 6 ou superior)
 - PostgreSQL (versão 12 ou superior)
+
+## Dependências Principais
+
+- **express**: Framework web
+- **pg**: Driver PostgreSQL
+- **jsonwebtoken**: Autenticação JWT
+- **bcryptjs**: Hash seguro de senhas
+- **dotenv**: Gerenciamento de variáveis de ambiente
+- **uuid**: Geração de IDs únicos
+- **nodemon** (dev): Recarregamento automático em desenvolvimento
 
 ## Configuração do Projeto
 
@@ -122,16 +132,19 @@ psql -U admin -d desafio_backend -h localhost
 ## Estrutura do Projeto
 
 ```
-documentation/    # Documentação do projeto e diagramas
 src/
-  ├── config/       # Arquivos de configuração
-  ├── controllers/  # Controladores da aplicação
-  ├── database/     # Scripts SQL e migrations
-  ├── domain/       # Modelos de domínio
-  ├── repositories/ # Camada de acesso a dados
-  ├── routes/       # Definição das rotas
-  ├── security/     # Configurações de segurança
-  └── services/     # Lógica de negócios
+  ├── config/        # Configurações (autenticação, banco de dados)
+  ├── controllers/   # Controladores das rotas
+  ├── database/      # Scripts SQL de inicialização
+  ├── domain/        # Modelos de domínio (classes)
+  ├── middlewares/   # Middlewares (autenticação, autorização)
+  ├── repositories/  # Camada de acesso a dados (DAOs)
+  ├── routes/        # Definição das rotas da API
+  ├── security/      # Classes de segurança (JWT, Hash, DTOs)
+  ├── services/      # Lógica de negócios
+  └── index.js       # Arquivo principal da aplicação
+
+documentation/    # Documentação técnica e diagramas
 ```
 
 ## Documentação
@@ -141,13 +154,79 @@ A pasta `documentation/` contém os diagramas e documentação técnica do proje
 - Modelo de Dados (Database Schema)
 - Diagramas de Relacionamento de Entidades (ERD)
 - Documentação da Arquitetura
-- Outros diagramas técnicos relevantes
+- Fluxos de autenticação e autorização
+- Especificações técnicas adicionais
 
-Os diagramas são mantidos atualizados e refletem a estrutura atual do projeto.
+## Autenticação e Segurança
 
-## Rotas Disponíveis
+### Fluxo de Autenticação
 
-### Rota de Health Check
+1. **Login:** Usuário fornece credenciais (usuário e senha)
+2. **Validação:** Senha é validada contra hash armazenado no banco
+3. **Token JWT:** Geração de token com informações do usuário e papéis
+4. **Acesso Protegido:** Endpoints protegidos validam o token em cada requisição
+5. **Autorização:** Middlewares verificam se o usuário tem permissão para o recurso
+
+### Headers Necessários
+
+Para acessar endpoints protegidos, inclua o token JWT no header:
+
+```
+Authorization: Bearer <seu_token_jwt>
+```
+
+## Documentação
+
+### Autenticação e Autorização
+
+A API utiliza **JWT (JSON Web Token)** para autenticação e controle de acesso baseado em papéis (roles). Existem dois papéis principais:
+- **ADMIN**: Acesso completo ao sistema
+- **USER**: Acesso limitado (apenas leitura de dados pessoais)
+- **ALUNO**
+
+**Rota de Autenticação:**
+```
+POST /auth/login
+```
+Realiza login e retorna um token JWT.
+
+**Corpo da Requisição:**
+```json
+{
+  "usuario": "nome_usuario",
+  "senha": "sua_senha"
+}
+```
+
+### Endpoints da API
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/health` | Status da API |
+| `GET` | `/` | Mensagem de boas-vindas |
+| `POST` | `/auth/login` | Login do usuário |
+| `GET` | `/usuario` | Listar usuários |
+| `POST` | `/usuario` | Criar usuário |
+| `PUT` | `/usuario/:id` | Atualizar usuário |
+| `DELETE` | `/usuario/:id` | Deletar usuário |
+| `GET` | `/aluno` | Listar alunos |
+| `POST` | `/aluno` | Criar aluno |
+| `PUT` | `/aluno/:id` | Atualizar aluno |
+| `DELETE` | `/aluno/:id` | Deletar aluno |
+| `GET` | `/matricula` | Listar matrículas |
+| `POST` | `/matricula` | Criar matrícula |
+| `PUT` | `/matricula/:id` | Atualizar matrícula |
+| `DELETE` | `/matricula/:id` | Deletar matrícula |
+| `GET` | `/turmas` | Listar turmas |
+| `POST` | `/turmas` | Criar turma |
+| `PUT` | `/turmas/:id` | Atualizar turma |
+| `DELETE` | `/turmas/:id` | Deletar turma |
+| `GET` | `/disciplinas` | Listar disciplinas |
+| `POST` | `/disciplinas` | Criar disciplina |
+| `PUT` | `/disciplinas/:id` | Atualizar disciplina |
+| `DELETE` | `/disciplinas/:id` | Deletar disciplina |
+
+### Exemplo de Resposta - Health Check
 
 ```
 GET /health
@@ -166,9 +245,9 @@ Exemplo de resposta:
 
 ## Endpoints Base
 
-- Base URL Local: `http://localhost:3000`
-- Health Check: `http://localhost:3000/health`
-- API Welcome: `http://localhost:3000/`
+- **Base URL Local:** `http://localhost:3000`
+- **Health Check:** `http://localhost:3000/health`
+- **API Welcome:** `http://localhost:3000/`
 
 ## Contribuindo
 
