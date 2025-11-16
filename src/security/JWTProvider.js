@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+console.log("JWT SECRET CARREGADA:", process.env.JWT_SECRET);
 
 class JWTProvider {
-  static JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+  static JWT_SECRET = process.env.JWT_SECRET || "senhaJwtDesafioBackend2025!";
   static REFRESH_SECRET = process.env.REFRESH_SECRET || "refresh-secret";
 
-  static JWT_EXPIRATION = "15m";  // Access Token
+  static JWT_EXPIRATION = "1d";  // Access Token
   static REFRESH_EXPIRATION = "7d"; // Refresh Token
 
   // -------------------------

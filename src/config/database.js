@@ -1,4 +1,6 @@
-require('dotenv').config();
+// src/config/database.js
+const path = require('path'); // <-- Faltava esta linha
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') }); // <-- Ajuste aqui
 const { Pool } = require('pg');
 const pool = new Pool({
   user: process.env.DB_USER,

@@ -8,5 +8,4 @@ class LoginDTO {
     return new LoginDTO(body.email, body.senha);
   }
 }
-
 module.exports = LoginDTO;
