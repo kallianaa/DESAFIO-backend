@@ -67,7 +67,7 @@ class TurmaService {
     }
 
     async putTurma(id, turmaData) {
-        const existing = await this.turmaRepository.findBy(id);
+        const existing = await this.turmaRepository.findById(id);
         if (!existing) {
             throw new Error('Turma não encontrada');
         }
@@ -119,7 +119,7 @@ class TurmaService {
     }
 
     async deleteTurma(id) {
-        const turma = await this.turmaRepository.findBy(id);
+        const turma = await this.turmaRepository.findById(id);
         if (!turma) {
             throw new Error('Turma não encontrada');
         }

@@ -35,7 +35,7 @@ class MatriculaService {
             throw new Error('aluno_id e turma_id são obrigatórios');
         }
         // 1. Buscar a Turma 
-        const turma = await this.turmaRepository.findBy(turma_id);
+        const turma = await this.turmaRepository.findById(turma_id);
         if (!turma) {
             throw new Error('Turma não encontrada');
         }
@@ -130,7 +130,7 @@ class MatriculaService {
 
         // Validação #2: Se mudar de turma OU reativar, checar vagas e conflito
         if (isChangingTurma || isBecomingActive) {
-            const turma = await this.turmaRepository.findBy(newTurmaId);
+            const turma = await this.turmaRepository.findById(newTurmaId);
             if (!turma) throw new Error('Nova turma não encontrada');
 
         // Checar Vagas

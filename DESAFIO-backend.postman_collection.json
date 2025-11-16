@@ -56,15 +56,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{access_token}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}"
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/auth/refresh",
@@ -84,6 +80,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -246,7 +246,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"codigo\": \"TURMA-001\",\n  \"disciplinaId\": \"{{disciplina_id}}\",\n  \"professorId\": \"{{professor_id}}\",\n  \"horarios\": [\n    {\n      \"diaSemana\": \"SEGUNDA\",\n      \"horaInicio\": \"08:00\",\n      \"horaFim\": \"10:00\"\n    },\n    {\n      \"diaSemana\": \"QUARTA\",\n      \"horaInicio\": \"08:00\",\n      \"horaFim\": \"10:00\"\n    }\n  ],\n  \"vagas\": 30,\n  \"vagasDisponiveis\": 30\n}"
+              "raw": "{\n  \"codigo\": \"TURMA-001\",\n  \"disciplina_id\": \"{{disciplina_id}}\",\n  \"professor_id\": \"{{professor_id}}\",\n  \"vagas\": 30,\n  \"dia\": 1,\n  \"turno\": 1\n}"
             },
             "url": {
               "raw": "{{base_url}}/turmas",
@@ -339,7 +339,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"codigo\": \"DISC-001\",\n  \"nome\": \"Matemática Discreta\",\n  \"descricao\": \"Estudo de estruturas matemáticas discretas\",\n  \"cargaHoraria\": 60\n}"
+              "raw": "{\n  \"codigo\": \"DISC-001\",\n  \"nome\": \"Matemática Discreta\",\n  \"creditos\": 60\n}"
             },
             "url": {
               "raw": "{{base_url}}/disciplinas",
@@ -365,7 +365,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Matemática Discreta Avançada\",\n  \"cargaHoraria\": 90\n}"
+              "raw": "{\n  \"codigo\": \"DISC-001\",\n  \"nome\": \"Matemática Discreta Avançada\",\n  \"creditos\": 90\n}"
             },
             "url": {
               "raw": "{{base_url}}/disciplinas/{{disciplina_id}}",
@@ -399,7 +399,7 @@
       "name": "Matrícula",
       "item": [
         {
-          "name": "Get My Enrollments",
+          "name": "Get My Matriculas",
           "request": {
             "method": "GET",
             "header": [
@@ -409,15 +409,21 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/matricula/minhas",
+              "raw": "{{base_url}}/matricula/minhas?aluno_id={{aluno_id}}",
               "host": ["{{base_url}}"],
-              "path": ["matricula", "minhas"]
+              "path": ["matricula", "minhas"],
+              "query": [
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}"
+                }
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "List All Enrollments",
+          "name": "List All Matriculas",
           "request": {
             "method": "GET",
             "header": [
@@ -453,7 +459,7 @@
           "response": []
         },
         {
-          "name": "Create Enrollment",
+          "name": "Create Matricula",
           "request": {
             "method": "POST",
             "header": [
@@ -479,7 +485,7 @@
           "response": []
         },
         {
-          "name": "Get Enrollment by ID",
+          "name": "Get Matricula by ID",
           "request": {
             "method": "GET",
             "header": [
@@ -497,7 +503,7 @@
           "response": []
         },
         {
-          "name": "Delete Enrollment",
+          "name": "Delete Matricula",
           "request": {
             "method": "DELETE",
             "header": [
@@ -548,6 +554,11 @@
     },
     {
       "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
       "value": "",
       "type": "string"
     },

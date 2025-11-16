@@ -50,7 +50,7 @@ class UsuarioRepository {
   // ------------------------
   // CREATE
   // ------------------------
-  async create({ nome, email, senhaHash }) {
+  async create({ nome, email, senhaHash, role, ra, siape }) {
     const result = await db.query(`
       INSERT INTO "Usuario" (nome, email, senha_hash)
       VALUES ($1, $2, $3)
@@ -58,11 +58,32 @@ class UsuarioRepository {
     `, [nome, email, senhaHash]);
 
     const usuario = result.rows[0];
+    const roleName = role || 'ALUNO';
 
-    // por padrão, todo usuário criado recebe a role ALUNO (opcional)
-    await this.assignRole(usuario.id, "ALUNO");
+    // Atribui a role especificada ou ALUNO por padrão
+    await this.assignRole(usuario.id, roleName);
 
-    return Usuario.criar(usuario, ["ALUNO"]);
+    // Se for ALUNO, criar registro na tabela Aluno
+    if (roleName === 'ALUNO') {
+      const raValue = ra || `RA${Date.now()}`; // Gera RA automático se não fornecido
+      await db.query(`
+        INSERT INTO "Aluno" (id, ra)
+        VALUES ($1, $2)
+        ON CONFLICT (ra) DO NOTHING
+      `, [usuario.id, raValue]);
+    }
+
+    // Se for PROFESSOR, criar registro na tabela Professor
+    if (roleName === 'PROFESSOR') {
+      const siapeValue = siape || `SIAPE${Date.now()}`; // Gera SIAPE automático se não fornecido
+      await db.query(`
+        INSERT INTO "Professor" (id, siape)
+        VALUES ($1, $2)
+        ON CONFLICT (siape) DO NOTHING
+      `, [usuario.id, siapeValue]);
+    }
+
+    return Usuario.criar(usuario, [roleName]);
   }
 
 
@@ -99,12 +120,16 @@ class UsuarioRepository {
   // DELETE
   // ------------------------
   async delete(id) {
-    // Remover as roles primeiro
+    // Remover registros de Aluno ou Professor se existirem
+    await db.query(`DELETE FROM "Aluno" WHERE id = $1`, [id]);
+    await db.query(`DELETE FROM "Professor" WHERE id = $1`, [id]);
+    
+    // Remover as roles
     await db.query(`DELETE FROM "UsuarioRole" WHERE usuario_id = $1`, [id]);
 
     // Agora pode remover o usuário
     await db.query(`DELETE FROM "Usuario" WHERE id = $1`, [id]);
-}
+  }
 
   
   // ------------------------

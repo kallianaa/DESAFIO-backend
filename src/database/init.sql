@@ -97,3 +97,32 @@ INSERT INTO "Role" (id, nome) VALUES
     (uuid_generate_v4(), 'PROFESSOR'),
     (uuid_generate_v4(), 'ALUNO')
 ON CONFLICT (id) DO NOTHING;
+
+-- Create test ADMIN user
+-- Password: 'teste' (hashed with bcrypt)
+INSERT INTO "Usuario" (id, nome, email, senha_hash) VALUES 
+    (uuid_generate_v4(), 'teste', 'admin@test.com', '$2b$10$grS5ciIpN2uxb.oSCzGWz.2q7LnSDFsjFnHyHdk8sxUey2yaW.9Cm')
+ON CONFLICT (email) DO NOTHING;
+
+-- Assign ADMIN role to the user
+INSERT INTO "UsuarioRole" (usuario_id, role_id) 
+SELECT u.id, r.id FROM "Usuario" u, "Role" r 
+WHERE u.email = 'admin@test.com' AND r.nome = 'ADMIN'
+ON CONFLICT (usuario_id, role_id) DO NOTHING;
+
+-- Create test PROFESSOR user
+-- Password: 'senha123' (hashed with bcrypt)
+INSERT INTO "Usuario" (id, nome, email, senha_hash) VALUES 
+    (uuid_generate_v4(), 'Professor Silva', 'professor@test.com', '$2b$10$SGQi3psOEVQJNAFtT.YcDezxErA1yAMkgh/ZFfmcHsRNjGP65Bj92')
+ON CONFLICT (email) DO NOTHING;
+
+-- Assign PROFESSOR role to the user
+INSERT INTO "UsuarioRole" (usuario_id, role_id) 
+SELECT u.id, r.id FROM "Usuario" u, "Role" r 
+WHERE u.email = 'professor@test.com' AND r.nome = 'PROFESSOR'
+ON CONFLICT (usuario_id, role_id) DO NOTHING;
+
+-- Create Professor record with SIAPE
+INSERT INTO "Professor" (id, siape)
+SELECT id, 'SIAPE001' FROM "Usuario" WHERE email = 'professor@test.com'
+ON CONFLICT (siape) DO NOTHING;

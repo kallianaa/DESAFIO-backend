@@ -23,6 +23,23 @@ class TurmaRepository {
         return result.rows.map(row => Turma.criar(row));
     }
 
+    async findByProfessor(professorId) {
+        const result = await db.query(
+            'SELECT * FROM "Turma" WHERE professor_id = $1',
+            [professorId]
+        );
+        return result.rows.map(row => Turma.criar(row));
+    }
+
+    async findByAluno(alunoId) {
+        const result = await db.query(`
+            SELECT t.* FROM "Turma" t
+            INNER JOIN "Matricula" m ON m.turma_id = t.id
+            WHERE m.aluno_id = $1 AND m.status = 'ATIVA'
+        `, [alunoId]);
+        return result.rows.map(row => Turma.criar(row));
+    }
+
     async save(turma) {
         const result = await db.query(
             `INSERT INTO "Turma" (codigo, disciplina_id, professor_id, vagas, dia, turno) 

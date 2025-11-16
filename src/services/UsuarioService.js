@@ -11,11 +11,15 @@ class UsuarioService {
     if (existente) throw new Error('Email já cadastrado');
 
     const senhaHash = await PasswordHasher.hash(dto.senha);
+    const role = dto.role || 'ALUNO';
 
     return await this.usuarioRepository.create({
       nome: dto.nome,
       email: dto.email,
-      senhaHash
+      senhaHash,
+      role,
+      ra: dto.ra,
+      siape: dto.siape
     });
   }
 
@@ -58,21 +62,6 @@ class UsuarioService {
     const usuario = await this.usuarioRepository.findById(id);
     if (!usuario) throw new Error('Usuário não encontrado');
     return this.usuarioRepository.delete(id);
-  }
-
-  atribuirRole = async (User, Role) => {
-    const idUser = typeof User === 'object' && User != null ? User.id : this.criarUsuario(User);
-    const roleName = typeof Role === 'object' && Role != null ? Role.name : Role;
-
-    if (!idUser) {
-      throw new Error('ID do Usuário é obrigatório.');
-    }
-    if (!roleName || typeof roleName !== 'string') {
-      throw new Error('O nome da Role (string) é obrigatório.');
-    }
-    
-    await this.usuarioRepository.assingRole(idUser, roleName);
-  
   }
 }
 

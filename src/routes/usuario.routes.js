@@ -12,38 +12,7 @@ const ensureRole = require('../middlewares/ensureRole');
 // ===============================
 router.use(ensureAuth);
 
-// Criar Aluno (ADMIN)
-router.post('/', ensureAuth, ensureRole('ADMIN'), async (req, res) => {
-  try {
-    const { usuario_id, ra } = req.body;
-
-    const result = await db.query(
-      `INSERT INTO "Aluno" (id, ra) VALUES ($1, $2) RETURNING *`,
-      [usuario_id, ra]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-
-// Criar Professor (ADMIN)
-router.post('/', ensureAuth, ensureRole('ADMIN'), async (req, res) => {
-  try {
-    const { usuario_id, siape } = req.body;
-
-    const result = await db.query(
-      `INSERT INTO "Aluno" (id, siape) VALUES ($1, $2) RETURNING *`,
-      [usuario_id, siape]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+router.post('/', (req, res) => UsuarioController.criar(req, res));
 
 // ADMIN lista todos os usuários
 router.get(
