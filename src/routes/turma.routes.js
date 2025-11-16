@@ -7,7 +7,7 @@ const router = express.Router();
 const turmaController = new TurmaController();
 
 // Todas as rotas abaixo exigem autenticação
-router.use(auth);
+router.use(ensureAuth);
 
 // Get all turmas
 router.get('/', ensureAuth, (req, res) => turmaController.getTurmas(req, res));

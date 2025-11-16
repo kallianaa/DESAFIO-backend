@@ -1,7 +1,7 @@
 // src/routes/matricula.routes.js
 const { Router } = require('express');
 const MatriculaController = require('../controllers/MatriculaController');
-const authenticate = require('../middlewares/auth');
+const authenticate = require('../middlewares/ensureAuth');
 
 const router = Router();
 
